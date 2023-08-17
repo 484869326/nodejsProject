@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>table模块快速使用</title>
+		<link rel="stylesheet" href="../layui/css/layui.css">
+		<style>
+			body {
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+		</style>
+	</head>
+	<body>
+		<table id="demo" lay-filter="test"></table>
+
+	</body>
+	<script src='../js/common.js'></script>
+	<script src="../layui/layui.js"></script>
+	<script type="text/html" id="operateTpl">
+		<a title='编辑' href='./update.html?userid={{d.userid}}' class='edit'><i class='layui-icon layui-icon-edit'></i></a>
+		<a title='删除' href='./delete.html?userid={{d.userid}}' class='delete'><i class='layui-icon layui-icon-delete'></i></a>
+	</script>
+	
+	<script>
+		layui.use(['table','jquery'], function() {
+			var table = layui.table,
+			 $=layui.jquery;
+			 
+			table.render({
+				elem: '#demo',
+				cellMinWidth: 80,
+				url: 'http://localhost:8888/api/users/getList',
+				method: "get",
+				headers,
+				parseData: function(res) {
+						console.log(res);
+						return {
+							"code": 0,
+							"msg": "",
+							"count": res.data.length,
+							"data": res.data
+						}
+					}
+					// ,page: true //开启分页
+					,
+				cols: [
+					[ //表头
+						{
+							field: 'userid',
+							title: '用户ID'
+						}, {
+							field: 'name',
+							title: '用户名'
+						}, {
+							field: 'telephone',
+							title: '手机号'
+						}, {
+							field: 'mail',
+							title: '电子邮箱'
+						}, {
+							field: 'address',
+							title: '地址'
+						},
+						{
+							field: 'operate',
+							title: '操作',
+							templet: '#operateTpl',
+							unresize: true
+						},
+					]
+				],
+				done: function(res, curr, count) {
+					$('.layui-table-cell').css({
+						'height': 'auto',
+						'text-align': 'center'
+					});
+				},
+			});
+		});
+	</script>
+</html>

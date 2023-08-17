@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" href="./layui/css/layui.css">
+		<link rel="stylesheet" href="./css/swiper.css">
+		<link rel="stylesheet" href="./css/common.css">
+	</head>
+	<body>
+		<div class="ullistFather">
+			<ul class="layui-nav ullist" lay-filter="">
+				<li class="layui-nav-item layui-this"><a href="index.html">首页</a></li>
+				<li class="layui-nav-item"><a href="backstage.html">后台管理</a></li>
+				<li class="layui-nav-item" lay-unselect="">
+					<a href="javascript:;"><img src="http://localhost:8888/api/img/User/admin.jpg"
+							tppabs="http://t.cn/RCzsdCq" class="layui-nav-img"></a>
+					<dl class="layui-nav-child">
+						<dd><a href="perUpdate.html">个人信息</a></dd>
+						<dd><a href="cart.html">购物车</a></dd>
+						<dd><a href="orders.html">我的订单</a></dd>
+						<dd style="text-align: center;" id="exit"><a href="javascript:void 0;">退出登录</a></dd>
+					</dl>
+				</li>
+			</ul>
+			<div class="search"><input type="text" placeholder="请输入搜索内容" id="searchContent"><div class="searchButton"><i class="layui-icon layui-icon-search "></i></div></div>
+		</div>
+		<div class="swiper">
+			<div class="swiperItem">
+				<ul class="ulist">
+					<li><img src="http://localhost:8888/api/img/swiper/swiper1.jpg" alt=""></li>
+					<li><img src="http://localhost:8888/api/img/swiper/swiper2.jpg" alt=""></li>
+					<li><img src="http://localhost:8888/api/img/swiper/swiper3.jpg" alt=""></li>
+					<li><img src="http://localhost:8888/api/img/swiper/swiper4.jpg" alt=""></li>
+				</ul>
+			</div>
+			<div class="swiperRadius">
+				<ul class="rlist">
+					<li class="active"></li>
+					<li></li>
+					<li></li>
+					<li></li>
+				</ul>
+			</div>
+			<span class="prev"></span>
+			<span class="next"></span>
+		</div>
+		<ul class="products">
+			
+		</ul>
+	</body>
+	<script src="./js/common.js"></script>
+	<script src=./js/swiper.js></script>
+	<script src="./layui/layui.js"></script>
+	<script>
+		layui.use(['table', 'jquery'], function() {
+			var table = layui.table,
+				$ = layui.jquery;
+				function initData(name=""){
+					$.ajax({
+						url:"http://localhost:8888/api/good/getList?name="+name,
+						type:"get",
+						headers,
+						dataType:"json",
+						async:false,
+						success:(res)=>{
+							let strHtml="";
+							res.data.map(item=>{
+								strHtml+=`<li class="item"><a href="./detail.html?goodid=${item.goodid}"><img class="album" src="http://localhost:8888/api/${item.picture}" alt=""><div class="name">${item.name}</div><div class="discount">预订立省300元|12期免息</div><div class="price">${item.price}</div><div class="service"><span class="tip">分期免息</span><span class="tip">赠送积分</span></div></a></li>`
+							})
+							strHtml+=`<li class="newitem"></li><li  class="newitem"></li>`
+							$(".products").html(strHtml);
+						}
+					})
+				}
+				initData();
+				$(".searchButton").on("click",function(){
+					initData($("#searchContent").val());
+				})
+				
+		})
+	</script>
+
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>table模块快速使用</title>
+		<link rel="stylesheet" href="../layui/css/layui.css">
+		<style>
+			body {
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+		</style>
+	</head>
+	<body>
+		<table id="demo" lay-filter="test"></table>
+	</body>
+	<script src='../js/common.js'></script>
+	<script src="../layui/layui.js"></script>
+	<script type="text/html" id="state">
+		{{d.state==1?'<font color="blue">已发货</font>':'<font color="red">未发货</font>'}}
+	</script>
+	<script type="text/html" id="operateTpl">
+		<a title='发货' href='./send.html?orderid={{d.orderid}}' class='edit' style='{{d.state==1?"display:none;":""}}'><i class='layui-icon layui-icon-release'></i></a>
+	</script>
+	<script>
+		layui.use(['table','jquery'], function() {
+			var table = layui.table,
+			 $=layui.jquery;
+			table.render({
+				elem: '#demo',
+				cellMinWidth: 80,
+				url:"http://localhost:8888/api/order/allList",
+				method: "get",
+				headers,
+				parseData: function(res) {
+						console.log(res);
+						return {
+							"code": 0,
+							"msg": "",
+							"count": res.data.length,
+							"data": res.data
+						}
+					}
+					// ,page: true //开启分页
+					,
+				cols: [
+					[ //表头
+						{
+							field: 'orderid',
+							title: '订单id'
+						}, {
+							field: 'userid',
+							title: '用户ID'
+						}, {
+							field: 'price',
+							title: '总价格'
+						}, {
+							field: 'time',
+							title: '下单时间'
+						}, {
+							field: 'state',
+							title: '状态',
+							templet: '#state',
+						},
+						{
+							field: 'operate',
+							title: '操作',
+							templet: '#operateTpl',
+							unresize: true
+						},
+					]
+				],
+				done: function(res, curr, count) {
+					$('.layui-table-cell').css({
+						'height': 'auto',
+						'text-align': 'center'
+					});
+				},
+			});
+		});
+	</script>
+</html>

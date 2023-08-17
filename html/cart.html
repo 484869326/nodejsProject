@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" href="./layui/css/layui.css">
+		<link rel="stylesheet" href="./css/common.css">
+		<style>
+			.cartList,
+			.pay {
+				width: 1200px;
+				margin: 0 auto;
+				background-color: #fff;
+				margin-top: 20px;
+				border-radius: 20px;
+			}
+
+			.cartList:hover,
+			.pay:hover {
+				box-shadow: 0 0 10px 5px rgb(0 0 0 / 10%);
+			}
+
+			.cartList>li {
+				display: flex;
+				padding: 0 27px;
+				justify-content: space-between;
+				align-items: center;
+				border-bottom: 2px dashed #ebebeb;
+			}
+
+			.cartList>li:last-child {
+				border-bottom: none;
+			}
+
+			.deleteButton {
+				font-size: 28px;
+				color: red;
+				cursor: pointer;
+			}
+
+			#numberVal {
+				max-width: 40px;
+				height: 30px;
+				text-align: center;
+				background-color: #e9ecef;
+				opacity: 1;
+				outline: none;
+				border: none;
+			}
+
+			.numberControll {
+				display: flex;
+				align-items: center;
+				margin-top: 20px;
+				margin-bottom: 20px;
+			}
+
+			.numberControll>button {
+				padding: 0 10px;
+				height: 30px;
+				line-height: 28px;
+			}
+
+			.good {
+				text-align: center;
+			}
+
+			.goodname {
+				font-size: 14px;
+			}
+
+			.goodprice {
+				font-size: 12px;
+				color: #747794;
+			}
+
+			.goodImg {
+				width: 200px;
+			}
+
+			img {
+				width: 100%;
+				vertical-align: middle;
+			}
+
+			.pay {
+				display: flex;
+				padding: 5px 0;
+				align-items: center;
+				justify-content: space-between;
+			}
+
+			.totalPrice {
+				margin-left: 20px;
+				font-size: 28px;
+			}
+
+			.payButton {
+				margin-right: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="ullistFather">
+			<ul class="layui-nav ullist" lay-filter="">
+				<li class="layui-nav-item layui-this"><a href="index.html">首页</a></li>
+				<li class="layui-nav-item"><a href="backstage.html">后台管理</a></li>
+				<li class="layui-nav-item" lay-unselect="">
+					<a href="javascript:;"><img src="http://localhost:8888/api/img/User/admin.jpg"
+							tppabs="http://t.cn/RCzsdCq" class="layui-nav-img"></a>
+					<dl class="layui-nav-child">
+						<dd><a href="perUpdate.html">个人信息</a></dd>
+						<dd><a href="cart.html">购物车</a></dd>
+						<dd><a href="orders.html">我的订单</a></dd>
+						<dd style="text-align: center;" id="exit"><a href="javascript:void 0;">退出登录</a></dd>
+					</dl>
+				</li>
+			</ul>
+		</div>
+		<ul class="cartList">
+
+		</ul>
+		<div class="pay">
+			<div class="totalPrice">¥ 0</div>
+			<button type="button" class="layui-btn layui-btn-normal payButton">下单</button>
+		</div>
+	</body>
+	<script src="./js/common.js"></script>
+	<script src="./layui/layui.js"></script>
+	<script>
+		layui.use(['table', 'jquery'], function() {
+			var $ = layui.jquery;
+			var totalPrice = 0,
+				cart = [];
+			$.ajax({
+				url: "http://localhost:8888/api/cart/getList",
+				type: "get",
+				headers,
+				dataType: "json",
+				async: false,
+				success: (res) => {
+					let strHtml = "";
+					if (res.data.length == 0) {
+						strHtml =
+							"<div style='text-align:center;height:50px;line-height:50px;'>购物车为空</div>"
+						$(".payButton").removeClass("layui-btn-normal");
+						$(".payButton").addClass("layui-btn-disabled");
+					} else {
+						res.data.map(item => {
+							let cartList = {
+								goodid: item.goodid,
+								number: item.number,
+								price:item.price
+							}
+							totalPrice += (parseFloat(item.price) * parseFloat(item.number))
+							strHtml += `<li>
+								<i class="layui-icon layui-icon-close-fill deleteButton" data-id="${item.goodid}"></i>
+								<div class="goodImg">
+									<img src="http://localhost:8888/api/${item.picture}"
+										alt="">
+								</div>
+								<div class="good">
+									<div class="goodname">${item.name}</div>
+									<div class="goodprice">￥${item.price}</div>
+								</div>
+								<div class="numberControll">`
+							if (item.number > 1) {
+								strHtml +=
+									`<button class="layui-btn layui-btn-primary reduce" data-id="${item.goodid}">`
+							} else {
+								strHtml +=
+									`<button class="layui-btn layui-btn-disabled reduce" data-id="${item.goodid}">`
+							}
+							strHtml += `-</button><input
+										type="text" value="${item.number}" readOnly id="numberVal" /><button
+										class="layui-btn layui-btn-primary add" data-id="${item.goodid}">+</button></div>
+							</li>`;
+							cart.push(cartList);
+						})
+						totalPrice.toFixed(2);
+						$(".payButton").addClass("layui-btn-normal");
+						$(".payButton").removeClass("layui-btn-disabled");
+						$(".totalPrice").html("¥ " + totalPrice);
+					}
+					$(".cartList").html(strHtml);
+				}
+			})
+			$(".deleteButton").on("click", function() {
+				let data = {
+					goodid: this.dataset.id
+				}
+				$.ajax({
+					url: "http://localhost:8888/api/cart/del",
+					type: "post",
+					dataType: "json",
+					data,
+					headers,
+					async: false,
+					success: (res) => {
+						if (res.error == 0) {
+							alert("删除成功");
+						} else {
+							alert("删除失败");
+						}
+						location.reload();
+					}
+				})
+			})
+			$(".reduce").on("click", function() {
+				let inputElement = this.nextSibling;
+				let value = parseInt(inputElement.value) - 1;
+				if (value <= 1) {
+					value = 1;
+					inputElement.value = value;
+					this.classList.add("layui-btn-disabled");
+					this.classList.remove("layui-btn-primary");
+				} else {
+					inputElement.value = value;
+				}
+				totalPrice=0;
+				cart.map(item => {
+					if (item.goodid == this.dataset.id) {
+						item.number = value
+					}
+					totalPrice += (parseFloat(item.price) * parseFloat(item.number));
+				})
+					totalPrice.toFixed(2);
+					$(".totalPrice").html("¥ " + totalPrice);
+				let data = {
+					goodid: this.dataset.id,
+					number: value
+				}
+				$.ajax({
+					url: "http://localhost:8888/api/cart/update",
+					type: "post",
+					dataType: "json",
+					headers,
+					data,
+					async: false
+				})
+			})
+			$(".add").on("click", function() {
+				let inputElement = this.previousSibling;
+				let value = parseInt(inputElement.value) + 1;
+				if (value > 1) {
+					inputElement.value = value;
+					inputElement.previousSibling.classList.remove("layui-btn-disabled");
+					inputElement.previousSibling.classList.add("layui-btn-primary");
+				}
+				totalPrice=0;
+				cart.map(item => {
+					if (item.goodid == this.dataset.id) {
+						item.number = value
+					}
+					totalPrice += (parseFloat(item.price) * parseFloat(item.number));
+				})
+				totalPrice.toFixed(2);
+				$(".totalPrice").html("¥ " + totalPrice);
+				let data = {
+					goodid: this.dataset.id,
+					number: value
+				}
+				$.ajax({
+					url: "http://localhost:8888/api/cart/update",
+					type: "post",
+					dataType: "json",
+					headers,
+					data,
+					async: false
+				})
+			})
+			$(".payButton").on("click", function() {
+				let data = {
+					price: totalPrice,
+					cart:JSON.stringify(cart)
+				}
+				$.ajax({
+					url: "http://localhost:8888/api/order/insert",
+					type: "post",
+					dataType: "json",
+					data,
+					headers,
+					async: false,
+					success: (res) => {
+						if(res.error==0){
+							alert('下单成功');
+						}else{
+							alert('下单失败');
+						}
+						location.reload();
+					}
+				})
+			})
+		})
+	</script>
+</html>

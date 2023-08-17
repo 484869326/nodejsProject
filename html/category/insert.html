@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<link rel="stylesheet" href="../layui/css/layui.css">
+		<script src="../layui/layui.js"></script>
+		<style>
+			body {
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+			img{
+				width: 100px;
+			}
+			.fileFather{
+				position: relative;
+			}
+			#picture{
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				left: 0;
+				top: 0;
+				opacity: 0;
+				background-color: red;
+			}
+			#uploadDemoView{
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%,-50%);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="layui-form">
+			<div class="layui-form-item">
+				<label class="layui-form-label"></label>
+				<div class="layui-input-block">
+					  <button type="button" class="layui-btn" onclick="location.href='./index.html'">返回</button>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">类型名</label>
+				<div class="layui-input-block">
+					<input type="text" name="typename" lay-verify="required" id="typename" autocomplete="off"
+						placeholder="请输入类型名" class="layui-input" value="1">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label"></label>
+			<button type="button" class="layui-btn" id="login">增加</button>
+		</div>
+		</div>
+		</div>
+	</body>
+	<script src='../js/common.js'></script>
+	<script>
+		layui.use(['table', 'jquery'], function() {
+					var $ = layui.jquery;
+					function openmessage(text){
+						layer.open({
+						  type: 1
+						  ,offset: "auto" //具体配置参考：http://doc/modules/layer.html#offset
+						  ,content: '<div style="padding: 20px 100px;">'+text+'</div>'
+						  ,btn: '关闭'
+						  ,btnAlign: 'c' //按钮居中
+						  ,shade: 0 //不显示遮罩
+						  ,yes: function(){
+						    layer.closeAll();
+							setTimeout(()=>{
+								location.reload();
+							},500)
+						  }
+						});
+					}
+					$("#login").click(() => {
+						$.ajax({
+							url: "http://localhost:8888/api/category/insert",
+							type: "post",
+							dataType: "json",
+							headers,
+							data:{
+								typename:$("#typename").val()
+							},
+							success: function(res) {
+								if(res.error==0){
+									  openmessage("增加成功");
+									 location.href='index.html';
+								}else{
+									openmessage("增加失败");
+								}
+							}
+						})
+					})
+				})
+	</script>
+</html>

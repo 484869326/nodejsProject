@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" href="./layui/css/layui.css">
+		<link rel="stylesheet" href="./css/common.css">
+		<style>
+			.orderList {
+				width: 1160px;
+				margin: 0 auto;
+				padding: 20px;
+				margin-top: 20px;
+				background-color: #ffaf00;
+				border-radius: 20px;
+			}
+			.fakeItem{
+				background-color: transparent!important;
+			}
+			.fakeItem:hover{
+				box-shadow: none!important;
+			}
+			.orderList:hover,
+				{
+				box-shadow: 0 0 10px 5px rgb(0 0 0 / 10%);
+			}
+
+			.orderList>div {
+				margin-left: 15px;
+				margin-bottom: 15px;
+			}
+
+			.orderList>div:last-child {
+				margin-bottom: 0;
+			}
+
+			.products>.item {
+				border-radius: 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="ullistFather">
+			<ul class="layui-nav ullist" lay-filter="">
+				<li class="layui-nav-item layui-this"><a href="index.html">首页</a></li>
+				<li class="layui-nav-item"><a href="backstage.html">后台管理</a></li>
+				<li class="layui-nav-item" lay-unselect="">
+					<a href="javascript:;"><img src="http://localhost:8888/api/img/User/admin.jpg"
+							tppabs="http://t.cn/RCzsdCq" class="layui-nav-img"></a>
+					<dl class="layui-nav-child">
+						<dd><a href="perUpdate.html">个人信息</a></dd>
+						<dd><a href="cart.html">购物车</a></dd>
+						<dd><a href="orders.html">我的订单</a></dd>
+						<dd style="text-align: center;" id="exit"><a href="javascript:void 0;">退出登录</a></dd>
+					</dl>
+				</li>
+			</ul>
+		</div>
+		<div class="allOrder">
+
+		</div>
+	</body>
+	<script src="./js/common.js"></script>
+	<script src="./layui/layui.js"></script>
+	<script>
+		layui.use(['table', 'jquery'], function() {
+					var $ = layui.jquery;
+					$.ajax({
+								url: "http://localhost:8888/api/order/getList",
+								type: "get",
+								dataType: "json",
+								async: false,
+								headers,
+								success: (res) => {
+										console.log(res);
+										let strHtml = "";
+										res.data.map(item => {
+													strHtml += `<div class="orderList">
+							<div class="orderTime">时间：${item.time}</div>
+							<div class="orderId">订单号：${item.orderid}</div>
+							<div class="price">总金额：￥${item.price}</div>`;
+													if (item.state) {
+														strHtml +=
+															`<div><button type="button" class="layui-btn layui-btn-danger">已发货</button></div>`;
+													} else {
+														strHtml +=
+															`<div><button type="button" class="layui-btn layui-btn-danger">未发货</button></div>`;
+													}
+													strHtml += '</div><ul class="products">';
+													let goodLength = item.goodList.length;
+														for(var i=0;i<4;i++){
+															if(i<goodLength){
+																strHtml +=`<li class="item"><a href="./detail.html?goodid=${item.goodList[i].goodid}"><img class="album" src="http://localhost:8888/api/${item.goodList[i].picture}" alt=""><div class="name">${item.goodList[i].name}</div><div class="price">￥${item.goodList[i].price}</div><div class="service">数量：${item.goodList[i].number}</div></a></li>`;
+															}else{
+																strHtml +=`<li class="item fakeItem"></li>`;
+															}
+															
+														}
+													strHtml += `</ul>`;
+						
+						
+					})
+					$(".allOrder").html(strHtml);
+				}
+			})
+		})
+	</script>
+</html>

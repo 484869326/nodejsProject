@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" href="./layui/css/layui.css">
+		<link rel="stylesheet" href="./css/common.css">
+		<style>
+			.updateList {
+				padding: 50px;
+				margin-top: 50px;
+				background-color: #fff;
+				border-radius: 50px;
+			}
+
+			.updateList:hover {
+				box-shadow: 0 0 10px 5px rgb(0 0 0 / 10%);
+			}
+		</style>
+	</head>
+	<body>
+	<div class="ullistFather">
+		<ul class="layui-nav ullist" lay-filter="">
+			<li class="layui-nav-item layui-this"><a href="index.html">首页</a></li>
+			<li class="layui-nav-item"><a href="backstage.html">后台管理</a></li>
+			<li class="layui-nav-item" lay-unselect="">
+				<a href="javascript:;"><img src="http://localhost:8888/api/img/User/admin.jpg"
+						tppabs="http://t.cn/RCzsdCq" class="layui-nav-img"></a>
+				<dl class="layui-nav-child">
+					<dd><a href="perUpdate.html">个人信息</a></dd>
+					<dd><a href="cart.html">购物车</a></dd>
+					<dd><a href="orders.html">我的订单</a></dd>
+					<dd style="text-align: center;" id="exit"><a href="javascript:void 0;">退出登录</a></dd>
+				</dl>
+			</li>
+		</ul>
+	</div>
+		<div class="layui-form ullist updateList">
+			<div class="layui-form-item">
+				<div style="width: 100%;text-align: center;font-size: 24px;margin-bottom: 40px;">个人信息修改</div>
+			</div>
+	<!-- 		<div class="layui-form-item">
+				<label class="layui-form-label">昵称</label>
+				<div class="layui-input-block">
+					<input type="text" lay-verify="required" id="nickname" autocomplete="off" placeholder="请输入昵称"
+						class="layui-input" value="1">
+				</div>
+			</div> -->
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-block">
+					<input type="text" lay-verify="required" id="name" autocomplete="off" placeholder="请输入真实姓名"
+						class="layui-input" value="1">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">电话</label>
+				<div class="layui-input-block">
+					<input type="text" lay-verify="required" id="telephone" autocomplete="off" placeholder="请输入电话"
+						class="layui-input" value="1">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">邮箱</label>
+				<div class="layui-input-block">
+					<input type="text" lay-verify="required" id="mail" autocomplete="off" placeholder="请输入邮箱"
+						class="layui-input" value="1">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">地址</label>
+				<div class="layui-input-block">
+					<input type="text" lay-verify="required" id="address" autocomplete="off" placeholder="请输入地址"
+						class="layui-input" value="1">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label"></label>
+				<div class="layui-input-block">
+					<button type="button" class="layui-btn" id="login" style="width: 100%;">修改</button>
+				</div>
+			</div>
+		</div>
+		</div>
+	</body>
+	<script src="./js/common.js"></script>
+	<script src="./layui/layui.js"></script>
+	<script>
+		layui.use(['table', 'jquery'], function() {
+			var $ = layui.jquery;
+			$.ajax({
+				url: "http://localhost:8888/api/users/intoUpdate",
+				type: "get",
+				headers,
+				dataType: "json",
+				success: (res) => {
+					let data = res.data;
+					$("#address").val(data.address);
+					$("#mail").val(data.mail);
+					$("#name").val(data.name);
+					$("#telephone").val(data.telephone);
+				}
+			})
+			$("#login").click(function() {
+				let data={
+					address:$("#address").val(),
+					mail:$("#mail").val(),
+					name:$("#name").val(),
+					telephone:$("#telephone").val()
+				}
+				$.ajax({
+					url: "http://localhost:8888/api/users/update",
+					type: "post",
+					data,
+					headers,
+					dataType: "json",
+					success: (res) => {
+						if(res.error==0){
+							alert('修改成功')
+						}else{
+							alert('修改失败');
+							location.reload();
+						}
+					}
+				})
+			})
+		})
+	</script>
+</html>

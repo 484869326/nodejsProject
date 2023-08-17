@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+	</body>
+	<script src='../js/common.js'></script>
+	<script src="../layui/layui.js"></script>
+	<script>
+		layui.use(['table', 'jquery'], function() {
+				var $ = layui.jquery;
+				function openmessage(text){
+					layer.open({
+					  type: 1
+					  ,offset: "auto" //具体配置参考：http://doc/modules/layer.html#offset
+					  ,content: '<div style="padding: 20px 100px;">'+text+'</div>'
+					  ,btn: '关闭'
+					  ,btnAlign: 'c' //按钮居中
+					  ,shade: 0 //不显示遮罩
+					  ,yes: function(){
+					    layer.closeAll();
+						setTimeout(()=>{
+							location.href="index.html";
+						},500)
+					  }
+					});
+				}
+				$.ajax({
+					url: "http://localhost:8888/api/category/del?typeid=" + window.location.search.split("=")[1] +
+					"",
+					headers,
+					type: "post",
+					dataType: "json",
+					success: function(res) {
+						if(res.error==0){
+							  openmessage("删除成功");
+						}else{
+							openmessage("删除失败");
+						}
+					}
+				})
+		})
+		</script>
+</html>

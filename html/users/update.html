@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="js/jq.js"></script>
+		<link rel="stylesheet" href="../layui/css/layui.css">
+		<style>
+			body {
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+			img{
+				width: 100px;
+			}
+			.fileFather{
+				position: relative;
+			}
+			#picture{
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				left: 0;
+				top: 0;
+				opacity: 0;
+				background-color: red;
+			}
+			#uploadDemoView{
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%,-50%);
+			}
+		</style>
+	</head>
+	<body>
+	<div class="layui-form">
+		<input type="hidden" id="userid"/>
+		<div class="layui-form-item">
+			<label class="layui-form-label"></label>
+			<div class="layui-input-block">
+				  <button type="button" class="layui-btn" onclick="location.href='./index.html'">返回</button>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">用户名</label>
+			<div class="layui-input-block">
+				<input type="text" name="name" lay-verify="title" id="name" autocomplete="off"
+					placeholder="请输入用户名" class="layui-input" value="1">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">电话</label>
+			<div class="layui-input-block">
+				<input type="text" name="telephone" lay-verify="title" id="telephone" autocomplete="off"
+					placeholder="请输入电话" class="layui-input" value="1">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">电子邮箱</label>
+			<div class="layui-input-block">
+				<input type="text" name="mail" lay-verify="title" id="mail" autocomplete="off"
+					placeholder="请输入电子邮箱" class="layui-input" value="1">
+			</div>
+		</div>
+	<div class="layui-form-item">
+			<label class="layui-form-label">地址</label>
+			<div class="layui-input-block">
+				<input type="text" name="address" lay-verify="title" id="address" autocomplete="off"
+					placeholder="请输入地址" class="layui-input" value="1">
+			</div>
+		</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<button type="button" class="layui-btn" id="login">修改</button>
+	</div>
+	</div>
+	</div>
+	</body>
+	<script src='../js/common.js'></script>
+	<script src="../layui/layui.js"></script>
+	<script>
+		layui.use(['table', 'jquery'], function() {
+			var $ = layui.jquery;
+			function openmessage(text) {
+				layer.open({
+					type: 1,
+					offset: "auto" //具体配置参考：http://doc/modules/layer.html#offset
+						,
+					content: '<div style="padding: 20px 100px;">' + text + '</div>',
+					btn: '关闭',
+					btnAlign: 'c' //按钮居中
+						,
+					shade: 0 //不显示遮罩
+						,
+					yes: function() {
+						layer.closeAll();
+						setTimeout(() => {
+							location.reload();
+						}, 500)
+					}
+				});
+			}
+			$.ajax({
+				url: "http://localhost:8888/api/users/getList?userid=" + window.location.search.split("=")[1] +
+					"",
+					headers,
+				type: "get",
+				dataType: "json",
+				success: (res) => {
+					$("#userid").val(window.location.search.split("=")[1]);
+					$("#name").val(res.data[0].name);
+					$("#telephone").val(res.data[0].telephone);
+					$("#mail").val(res.data[0].mail);
+					$("#address").val(res.data[0].address);
+				}
+			})
+			$("#login").click(() => {
+				let data={
+					name:$("#name").val(),
+					telephone:$("#telephone").val(),
+					mail:$("#mail").val(),
+					address:$("#address").val(),
+				}
+				$.ajax({
+					url: "http://localhost:8888/api/users/allUpdate?userid=" + $("#userid").val() + "",
+					type: "post",
+					dataType: "json",
+					headers,
+					data,
+					success: function(res) {
+						if (res.error == 0) {
+							openmessage("更新成功");
+						} else {
+							openmessage("更新失败");
+						}
+					}
+				})
+			})
+		})
+	</script>
+</html>

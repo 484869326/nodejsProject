@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" href="./layui/css/layui.css">
+		<link rel="stylesheet" href="./css/common.css">
+		<style>
+			.menuList{
+				margin-top: 50px;
+				display: flex;
+			}
+			.menuList>.menu{
+				flex: 1;
+			}
+			.menuList>iframe{
+				flex: 5;
+				height: 800px;
+			}
+		</style>
+	</head>
+	<body>
+	<div class="ullistFather">
+		<ul class="layui-nav ullist" lay-filter="">
+			<li class="layui-nav-item "><a href="index.html">首页</a></li>
+			<li class="layui-nav-item layui-this"><a href="backstage.html">后台管理</a></li>
+			<li class="layui-nav-item" lay-unselect="">
+				<a href="javascript:;"><img src="http://localhost:8888/api/img/User/admin.jpg"
+						tppabs="http://t.cn/RCzsdCq" class="layui-nav-img"></a>
+				<dl class="layui-nav-child">
+					<dd><a href="perUpdate.html">个人信息</a></dd>
+					<dd><a href="cart.html">购物车</a></dd>
+					<dd><a href="orders.html">我的订单</a></dd>
+					<dd style="text-align: center;" id="exit"><a href="javascript:void 0;">退出登录</a></dd>
+				</dl>
+			</li>
+		</ul>
+	</div>
+	<div class="ullist menuList">
+		<div class="menu" >
+			<ul class="layui-nav layui-nav-tree" lay-filter="test">
+			  <li class="layui-nav-item layui-nav-itemed layui-this" data-index=0><a href="javascript:void 0;">商品管理</a></li>
+			  <li class="layui-nav-item " data-index=1><a href="javascript:void 0;" >用户管理</a></li>
+			  <li class="layui-nav-item " data-index=2><a href="javascript:void 0;" >类别管理</a></li>
+			  <li class="layui-nav-item" data-index=3><a href="javascript:void 0;" >订单管理</a></li>
+			</ul>
+		</div>
+		<iframe src="./good/index.html" id="iframe">
+			
+		</iframe>
+	</div>
+	</body>
+	<script src="js/common.js"></script>
+	<script src="./layui/layui.js"></script>
+	<script>
+		layui.use(['table', 'jquery'], function() {
+			var $ = layui.jquery;
+			$(".layui-nav-item").click(function(){
+				let i=this.dataset.index;
+				let iframe=document.querySelector("#iframe");
+				if(i=="0"){
+					iframe.src="./good/index.html";
+				}else if(i=="1"){
+					iframe.src="./users/index.html";
+				}else if(i=="2"){
+					iframe.src="./category/index.html";
+				}else if(i=='3'){
+					iframe.src="./order/index.html";
+				}
+			})
+		})
+		</script>
+</html>

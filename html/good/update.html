@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="js/jq.js"></script>
+		<link rel="stylesheet" href="../layui/css/layui.css">
+		<style>
+			body {
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+			img{
+				width: 100px;
+			}
+			.fileFather{
+				position: relative;
+			}
+			#picture{
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				left: 0;
+				top: 0;
+				opacity: 0;
+				background-color: red;
+			}
+			#uploadDemoView{
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%,-50%);
+			}
+		</style>
+	</head>
+	<body>
+	<div class="layui-form">
+		<input type="hidden" id="goodid"/>
+		<div class="layui-form-item">
+			<label class="layui-form-label"></label>
+			<div class="layui-input-block">
+				  <button type="button" class="layui-btn" onclick="location.href='./index.html'">返回</button>
+			</div>
+		</div>
+		<div class="layui-form-item categorySelect">
+			<label class="layui-form-label">类型</label>
+			<div class="layui-input-block">
+				<select  id="typename" lay-filter="aihao">
+				</select>
+			<!-- 	<input type="text" name="typename" lay-verify="title" id="typename" autocomplete="off"
+					placeholder="请输入类型id" class="layui-input" value="1"> -->
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">商品名</label>
+			<div class="layui-input-block">
+				<input type="text" name="goodname" lay-verify="title" id="goodname" autocomplete="off"
+					placeholder="请输入商品名" class="layui-input" value="1">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">价格</label>
+			<div class="layui-input-block">
+				<input type="text" name="price" lay-verify="title" id="price" autocomplete="off"
+					placeholder="请输入价格" class="layui-input" value="1">
+			</div>
+		</div>
+		<div class="layui-form-item fileFather">
+			<label class="layui-form-label">商品图片</label>
+				<div class="layui-upload-drag">
+				  <i class="layui-icon"></i>
+				  <p>点击上传</p>
+				  <input type="file" name="picture" id="picture">
+				  <div class="layui" id="uploadDemoView">
+				    <img src="" alt="上传成功后渲染"  id="newLogin">
+				  </div>
+				</div>
+		</div>
+		<div class="layui-form-item statusSelect">
+		<label class="layui-form-label">状态</label>
+		<div class="layui-input-block">
+			<select name="state" id="state" lay-filter="aihao">
+				<option value="1">上架</option>
+				<option value="0">下架</option>
+			</select>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<button type="button" class="layui-btn" id="login">修改</button>
+	</div>
+	</div>
+	</div>
+	</body>
+	<script src='../js/common.js'></script>
+	<script src="../layui/layui.js"></script>
+	<script>
+		layui.use(['table', 'jquery','form'], function() {
+			var $ = layui.jquery;
+			var form = layui.form;
+			function openmessage(text) {
+				layer.open({
+					type: 1,
+					offset: "auto" //具体配置参考：http://doc/modules/layer.html#offset
+						,
+					content: '<div style="padding: 20px 100px;">' + text + '</div>',
+					btn: '关闭',
+					btnAlign: 'c' //按钮居中
+						,
+					shade: 0 //不显示遮罩
+						,
+					yes: function() {
+						layer.closeAll();
+						setTimeout(() => {
+							location.reload();
+						}, 500)
+					}
+				});
+			}
+			$.ajax({
+				url: "http://localhost:8888/api/category/getList",
+				type: "get",
+				dataType: "json",
+				async:false,
+				headers,
+				success:(res)=>{
+					let strHtml='';
+					res.data.map(item=>{
+						strHtml+=`<option value="${item.typeid}">${item.typename}</option>`
+					})
+					$("#typename").html(strHtml);
+					console.log(strHtml)
+					form.render();
+				}
+			})
+			$.ajax({
+				url: "http://localhost:8888/api/good/getList?goodid=" + window.location.search.split("=")[1] +
+					"",
+				type: "get",
+				dataType: "json",
+				headers,
+				async:false,
+				success: (res) => {
+					$("#goodid").val(window.location.search.split("=")[1]);
+					$("#typename").val(res.data[0].typeid);
+					$("#goodname").val(res.data[0].name);
+					$("#price").val(res.data[0].price);
+					$("#newLogin").attr("src", "http://localhost:8888/api/" + res.data[0].picture);
+					$("#state").val(res.data[0].state);
+					$(".categorySelect .layui-unselect").val($("#typename").find("option:selected").text());
+					$(".statusSelect .layui-unselect").val($("#state").find("option:selected").text());
+					
+				}
+			})
+			$('#picture').on('input', () => {
+				var file = $('#picture')[0].files[0];
+				if (window.FileReader) {
+					var fr = new FileReader();
+					fr.readAsDataURL(file);
+					fr.onloadend = function() {
+						$('#newLogin').attr('src', fr.result)
+					}
+				}
+			})
+			$("#login").click(() => {
+				var datas = new FormData();
+				datas.append("typeid", $("#typename").val())
+				datas.append("goodname", $("#goodname").val())
+				datas.append("price", $("#price").val())
+				datas.append("state", $("#state").val())
+				datas.append("picture", $(":file").get(0).files[0]);
+				$.ajax({
+					url: "http://localhost:8888/api/good/update?goodid=" + $("#goodid").val() + "",
+					type: "post",
+					dataType: "json",
+					headers,
+					processData: false,
+					contentType: false,
+					data: datas,
+					success: function(res) {
+						if (res.error == 0) {
+							openmessage("更新成功");
+						} else {
+							openmessage("更新失败");
+						}
+					}
+				})
+			})
+		})
+	</script>
+</html>
