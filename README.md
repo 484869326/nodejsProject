@@ -1,4 +1,4 @@
-![Express 4.16.1](https://img.shields.io/badge/Express-4.16.1-blue) ![MySQL 5.7.26 badge](https://img.shields.io/badge/MySQL-5.7.26-blue)    ![Laravel 5.7.29 badge](https://img.shields.io/badge/LayUI-gray)         ![WeChat Mini Program v3.0.0 badge](https://img.shields.io/badge/Redis-gray) ![Vue 3](https://img.shields.io/badge/Nginx-gray)  ![Vue 3](https://img.shields.io/badge/Nodejs-14.21.3-brightgreen) 
+![Express 4.16.1  badge](https://img.shields.io/badge/Express-4.16.1-blue) ![MySQL 5.7.26 badge](https://img.shields.io/badge/MySQL-5.7.26-blue)    ![LayUI badge](https://img.shields.io/badge/LayUI-gray)         ![Redis badge](https://img.shields.io/badge/Redis-gray) ![Nginx badge](https://img.shields.io/badge/Nginx-gray)  ![Nodejs 14.21.3 badge](https://img.shields.io/badge/Nodejs-14.21.3-brightgreen) 
 * tips：
 * 图片没显示，是因为我把图片弄在GitHub的仓库，得使用科学上网才能正常加载。
 # 系统展示（前台）
